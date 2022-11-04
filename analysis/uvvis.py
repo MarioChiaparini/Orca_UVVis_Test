@@ -7,7 +7,6 @@
 import matplotlib.pyplot as plt
 import sys 
 import re #ReGex - regular expression
-import numpy as np 
 
 
 path = '/home/ABTLUS/mario.neto/Desktop/orca-out/benzene/benzene.out'
