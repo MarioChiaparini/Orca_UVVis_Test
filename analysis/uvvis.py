@@ -1,40 +1,45 @@
-import sys 
-import os 
-import re 
-import argparse 
-import numpy as np 
+###############################
+#!B3LYP DEF2-TZVP CPCM(?) 
+#%TDDFT
+#   NROOTS ?
+#END
+###############################
 import matplotlib.pyplot as plt
-from scipy.signal import find_peaks
+import sys 
+import re #ReGex - regular expression
+import numpy as np 
 
-string_start = 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS'
-string_end = 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS'
+
 path = '/home/ABTLUS/mario.neto/Desktop/orca-out/benzene/benzene.out'
 
-found_uv_section =  False
+def GetOrcaData(path, string_start, string_end,index):
+    data = []
 
-state = []
-energy = []
-intenity = []
-
-def GetOrcaData(path):
     try:
         with open(path, "r") as input_file:
             for line in input_file: 
                 if string_start in line:
-                    found_uv_section = True 
+                    found = True 
                     for line in input_file:
                         if string_end in line:
                             break 
+                        if found == False:
+                            print(f"'{string_start}'")
+                            sys.exit(1)
                         if re.search("\d\s{1,}\d", line):
                             #state.append(line.strip().split()[0])
                             #print(line.strip().split()[3])
-                            energy.append(line.strip().split()[1])
-                            intenity.append(line.strip().split()[3])
+                            data.append(line.strip().split()[index])
+                            #intensity.append(line.strip().split()[3])
     except IOError:
         print("Error")
         sys.exit(1)
-    return energy, intenity #, state
+    return data #, intensity #, state
 
-data = GetOrcaData(path)
-print(data)
-getOrcaData(path=path)
+
+intesidade = GetOrcaData(path, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 
+                'ABSORPTION SPECTRUM VIA TRANSITION VELOCITY DIPOLE MOMENTS', 3)
+wavlennght = GetOrcaData(path, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 
+                'ABSORPTION SPECTRUM VIA TRANSITION VELOCITY DIPOLE MOMENTS', 2)
+
+plt.plot(wavlennght, intesidade)
